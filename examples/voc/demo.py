@@ -39,12 +39,12 @@ def main():
         batch_size=1, shuffle=False,
         num_workers=4, pin_memory=True)
 
-    transform = transforms.Compose([transforms.ToTensor(),
+    transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
                                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    my_testset = torchvision.datasets.ImageFolder('/home/lch/Documents/5421_P1/my_images')
-    my_testLoader = torch.utils.data.DataLoader(my_testset, batch_size=4, shuffle=True, num_workers=2)
-    print(len(my_testset.classes))
-
+    my_testset = torchvision.datasets.ImageFolder('/home/lch/Documents/5421_P1/my_images',transform=transform)
+    my_testLoader = torch.utils.data.DataLoader(my_testset, batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
+    print(len(my_testset))
+    print(len(my_testLoader))
 
     n_class = len(val_loader.dataset.class_names)
 
@@ -75,7 +75,7 @@ def main():
     label_trues, label_preds = [], []
     img_index = 0
     for batch_idx, (data, target) in tqdm.tqdm(enumerate(val_loader),
-                                               total=len(val_loader),
+                                               total=len(my_testLoader),
                                                ncols=80, leave=False):
         if torch.cuda.is_available():
             data, target = data.cuda(), target.cuda()
@@ -87,7 +87,7 @@ def main():
         lbl_true = target.data.cpu()
 
         for img, lt, lp in zip(imgs, lbl_true, lbl_pred):
-            img, lt = val_loader.dataset.untransform(img, lt)
+            img, lt = my_testLoader.dataset.untransform(img, lt)
             label_trues.append(lt)
             label_preds.append(lp)
             if len(visualizations) < 2:
