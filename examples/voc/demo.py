@@ -43,15 +43,12 @@ def main():
         batch_size=1, shuffle=False,
         num_workers=4, pin_memory=True)
 
-    n_class = len(val_loader.dataset.class_names)
-
     png_root = osp.expanduser('~/Documents/5421_P1/my_images')
     transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
                                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     my_testset = VOC2011ClassSeg_revised(png_root,split='val', transform=True)
     my_testLoader = torch.utils.data.DataLoader(my_testset, batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
 
-    # print(len(testloader))
 
     n_class = len(my_testLoader.dataset.class_names)
     print(my_testLoader.dataset.class_names)
@@ -106,6 +103,7 @@ def main():
             visualizations.append(viz)
             viz = fcn.utils.get_tile_image(visualizations)
             skimage.io.imsave('./demo_result/viz_evaluate'+str(cnt)+'.png', viz)
+            print(viz.shape)
             visualizations = []
             cnt = cnt+1
 
