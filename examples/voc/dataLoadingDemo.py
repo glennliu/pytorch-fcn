@@ -197,7 +197,7 @@ transformed_dataset = FaceLandmarksDataset(csv_file='/home/lch/data/datasets/fac
                                            root_dir='/home/lch/data/datasets/faces/',
                                            transform=transforms.Compose([
                                                Rescale(256),
-                                               RandomCrop(224),
+                                               RandomCrop(168),
                                                ToTensor()
                                            ]))
 

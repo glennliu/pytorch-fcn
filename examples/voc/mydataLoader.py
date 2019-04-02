@@ -9,8 +9,7 @@ import scipy.io
 import torch
 from torch.utils import data
 
-
-class VOCClassSegBase(data.Dataset):
+class VOCClassSegBase_revised(data.Dataset):
 
     class_names = np.array([
         'background',
@@ -43,14 +42,14 @@ class VOCClassSegBase(data.Dataset):
         self._transform = transform
 
         # VOC2011 and others are subset of VOC2012
-        dataset_dir = osp.join(self.root, 'VOC/VOCdevkit/VOC2012')
+        dataset_dir = osp.join(self.root, '')
         self.files = collections.defaultdict(list)
         for split in ['train', 'val']:
             imgsets_file = osp.join(
-                dataset_dir, 'ImageSets/Segmentation/%s.txt' % split)
+                dataset_dir, 'scripts/%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
-                img_file = osp.join(dataset_dir, 'JPEGImages/%s.jpg' % did)
+                img_file = osp.join(dataset_dir, 'JPEGImages/%s.png' % did)
                 lbl_file = osp.join(
                     dataset_dir, 'SegmentationClass/%s.png' % did)
                 self.files[split].append({
@@ -95,23 +94,23 @@ class VOCClassSegBase(data.Dataset):
         lbl = lbl.numpy()
         return img, lbl
 
-class VOC2011ClassSeg(VOCClassSegBase):
+class VOC2011ClassSeg_revised(VOCClassSegBase_revised):
 
     def __init__(self, root, split='train', transform=False):
-        super(VOC2011ClassSeg, self).__init__(
+        super(VOC2011ClassSeg_revised, self).__init__(
             root, split=split, transform=transform)
         pkg_root = osp.join(osp.dirname(osp.realpath(__file__)), '..')
         imgsets_file = osp.join(
-            pkg_root, 'ext/fcn.berkeleyvision.org',
-            'data/pascal/seg11valid.txt')
-        dataset_dir = osp.join(self.root, 'VOC/VOCdevkit/VOC2012')
+            root, 'scripts',
+            'seg11valid.txt')
+        dataset_dir = osp.join(self.root, '')
         for did in open(imgsets_file):
             did = did.strip()
-            img_file = osp.join(dataset_dir, 'JPEGImages/%s.jpg' % did)
+            img_file = osp.join(dataset_dir, 'JPEGImages/%s.png' % did)
             lbl_file = osp.join(dataset_dir, 'SegmentationClass/%s.png' % did)
             self.files['seg11valid'].append({'img': img_file, 'lbl': lbl_file})
 
-class VOC2012ClassSeg(VOCClassSegBase):
+class VOC2012ClassSeg(VOCClassSegBase_revised):
 
     url = 'http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar'  # NOQA
 
@@ -120,7 +119,7 @@ class VOC2012ClassSeg(VOCClassSegBase):
             root, split=split, transform=transform)
 
 
-class SBDClassSeg(VOCClassSegBase):
+class SBDClassSegRevised(VOCClassSegBase_revised):
 
     # XXX: It must be renamed to benchmark.tar to be extracted.
     url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz'  # NOQA
