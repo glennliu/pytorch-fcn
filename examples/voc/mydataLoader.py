@@ -45,17 +45,22 @@ class VOCClassSegBase_revised(data.Dataset):
         dataset_dir = osp.join(self.root, '')
         self.files = collections.defaultdict(list)
         for split in ['train', 'val']:
-            imgsets_file = osp.join(
-                dataset_dir, 'scripts/%s.txt' % split)
+            imgsets_file = osp.join(dataset_dir, '%s/' % split, '%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
-                img_file = osp.join(dataset_dir, 'JPEGImages/%s.png' % did)
+                img_file = osp.join(dataset_dir, '%s/images' % split, '/%s.png' % did)
+                print(dataset_dir)
+                print(did)
+                print(img_file)
                 lbl_file = osp.join(
-                    dataset_dir, 'SegmentationClass/%s.png' % did)
+                    dataset_dir, '%s/labels' % split, '/%s.png' % did)
                 self.files[split].append({
                     'img': img_file,
                     'lbl': lbl_file,
                 })
+            # print(imgsets_file)
+            # print(img_file)
+            # print(lbl_file)
 
     def __len__(self):
         return len(self.files[self.split])
@@ -101,13 +106,13 @@ class VOC2011ClassSeg_revised(VOCClassSegBase_revised):
             root, split=split, transform=transform)
         pkg_root = osp.join(osp.dirname(osp.realpath(__file__)), '..')
         imgsets_file = osp.join(
-            root, 'scripts',
-            'seg11valid.txt')
+            root, 'val',
+            'list.txt')
         dataset_dir = osp.join(self.root, '')
         for did in open(imgsets_file):
             did = did.strip()
-            img_file = osp.join(dataset_dir, 'JPEGImages/%s.png' % did)
-            lbl_file = osp.join(dataset_dir, 'SegmentationClass/%s.png' % did)
+            img_file = osp.join(dataset_dir, '%s/images' % split, '%s.png' % did)
+            lbl_file = osp.join(dataset_dir, '%s/labels' % split, '%s.png' % did)
             self.files['seg11valid'].append({'img': img_file, 'lbl': lbl_file})
 
 class VOC2012ClassSeg(VOCClassSegBase_revised):
@@ -129,14 +134,14 @@ class SBDClassSegRevised(VOCClassSegBase_revised):
         self.split = split
         self._transform = transform
 
-        dataset_dir = osp.join(self.root, 'VOC/benchmark_RELEASE/dataset')
+        dataset_dir = osp.join(self.root, '')
         self.files = collections.defaultdict(list)
         for split in ['train', 'val']:
-            imgsets_file = osp.join(dataset_dir, '%s.txt' % split)
+            imgsets_file = osp.join(dataset_dir, '%s/' % split,'%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
-                img_file = osp.join(dataset_dir, 'img/%s.jpg' % did)
-                lbl_file = osp.join(dataset_dir, 'cls/%s.mat' % did)
+                img_file = osp.join(dataset_dir, 'train/images/%s.png' % did)
+                lbl_file = osp.join(dataset_dir, 'train/labels/%s.png' % did)
                 self.files[split].append({
                     'img': img_file,
                     'lbl': lbl_file,
@@ -150,9 +155,12 @@ class SBDClassSegRevised(VOCClassSegBase_revised):
         img = np.array(img, dtype=np.uint8)
         # load label
         lbl_file = data_file['lbl']
-        mat = scipy.io.loadmat(lbl_file)
-        lbl = mat['GTcls'][0]['Segmentation'][0].astype(np.int32)
-        lbl[lbl == 255] = -1
+        # mat = scipy.io.loadmat(lbl_file)
+        # lbl = mat['GTcls'][0]['Segmentation'][0].astype(np.int32)
+        # lbl[lbl == 255] = -1
+        lbl = PIL.Image.open(lbl_file)
+        lbl = np.array(lbl, dtype=np.uint8)
+
         if self._transform:
             return self.transform(img, lbl)
         else:
