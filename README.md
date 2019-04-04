@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/wkentaro/pytorch-fcn.svg?branch=master)](https://travis-ci.org/wkentaro/pytorch-fcn)
 
 PyTorch implementation of [Fully Convolutional Networks](https://github.com/shelhamer/fcn.berkeleyvision.org).
-
+Based on previous model, a demo program is developed for HKUST COMP5421 Project 1 (Semantic Segmentation)
 
 ## Requirements
 
@@ -27,6 +27,37 @@ pip install .
 # or
 
 pip install torchfcn
+```
+
+## Download Trained Model or Training a Model
+A model is trained based on test dataset from HKUST COMP5421. And the model can be downloaded here.
+
+For Training a model by yourself
+```bash
+cd examples/voc
+python train_fcn32s_demo.py
+```
+
+## Run demo on test and validation dataset
+```bash
+cd examples/voc
+python demo.py $PYTORCH_MODEL_PATH
+```
+The program will generate segmention images at `./test_result` and `./val_result`. The terminal also display key accuracy data
+```js
+lch@gs:~/code_ws/comp5421/pytorch-fcn/examples/voc$ python demo.py logs/20190403_155952.262577/model_best.pth.tar 
+/home/lch/anaconda3/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+==> Loading FCN32s model file: logs/20190403_155952.262577/model_best.pth.tar
+==> Evaluating with VOC2011ClassSeg seg11valid
+  0%|                                                   | 0/150 [00:00<?, ?it/s]demo.py:91: UserWarning: volatile was removed and now has no effect. Use `with torch.no_grad():` instead.
+  data, target = Variable(data, volatile=True), Variable(target)
+  0%|                                                    | 0/50 [00:00<?, ?it/s]demo.py:123: UserWarning: volatile was removed and now has no effect. Use `with torch.no_grad():` instead.
+  data, target = Variable(data, volatile=True), Variable(target)
+Accuracy: 78.4032333198672                                                      
+Accuracy Class: 68.42654277275444
+Mean IU: 57.14322250091958
+FWAV Accuracy: 66.66971237667332
 ```
 
 

@@ -44,15 +44,16 @@ def main():
         num_workers=4, pin_memory=True)
 
     png_root = osp.expanduser('~/Documents/5421_P1/comp5421_TASK2')
-    # transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
-    #                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
+                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     valSet = VOC2011ClassSeg_revised(png_root,split='val', transform=True)
     valLoader = torch.utils.data.DataLoader(valSet, batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
     testSet = VOC2011ClassSeg_revised(png_root,split='test',transform=True)
     testLoader = torch.utils.data.DataLoader(testSet,batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
 
-    n_class = len(valLoader.dataset.class_names)
-    print(valLoader.dataset.class_names)
+    val_n_class = len(valLoader.dataset.class_names)
+    test_n_class = len(testLoader.dataset.class_names)
+    # print(valLoader.dataset.class_names)
 
     if osp.basename(model_file).startswith('model_best'):
         model = torchfcn.models.FCN32s(n_class=21)
@@ -79,6 +80,40 @@ def main():
     print('==> Evaluating with VOC2011ClassSeg seg11valid')
     visualizations = []
     label_trues, label_preds = [], []
+
+## test data
+    for batch_idx, (data, target) in tqdm.tqdm(enumerate(testLoader),
+                                               total=len(testLoader),
+                                               ncols=80, leave=False):
+        # print(batch_idx)
+        if torch.cuda.is_available():
+            data, target = data.cuda(), target.cuda()
+        data, target = Variable(data, volatile=True), Variable(target)
+        score = model(data)
+
+        imgs = data.data.cpu()
+        lbl_pred = score.data.max(1)[1].cpu().numpy()[:, :, :]
+        lbl_true = target.data.cpu()
+
+        for img, lt, lp in zip(imgs, lbl_true, lbl_pred):
+            img, lt = testLoader.dataset.untransform(img, lt)
+            label_trues.append(lt)
+            label_preds.append(lp)
+            img_name = testLoader.dataset.getImageName(batch_idx)
+            # if len(visualizations) < 4:
+            viz = fcn.utils.visualize_segmentation(
+                lbl_pred=lp, img=img, n_class=val_n_class,
+                label_names=testLoader.dataset.class_names)
+            visualizations.append(viz)
+            viz = fcn.utils.get_tile_image(visualizations)
+            skimage.io.imsave('./test_result/'+img_name+'.png', viz)
+            # print(viz.shape)
+            visualizations = []
+
+
+## validation data
+    visualizations = []
+    label_trues, label_preds = [], []
     for batch_idx, (data, target) in tqdm.tqdm(enumerate(valLoader),
                                                total=len(valLoader),
                                                ncols=80, leave=False):
@@ -99,7 +134,7 @@ def main():
             img_name = valLoader.dataset.getImageName(batch_idx)
             # if len(visualizations) < 4:
             viz = fcn.utils.visualize_segmentation(
-                lbl_pred=lp, img=img, n_class=n_class,
+                lbl_pred=lp, img=img, n_class=val_n_class,
                 label_names=valLoader.dataset.class_names)
             visualizations.append(viz)
             viz = fcn.utils.get_tile_image(visualizations)
@@ -108,7 +143,7 @@ def main():
             visualizations = []
 
     metrics = torchfcn.utils.label_accuracy_score(
-        label_trues, label_preds, n_class=n_class)
+        label_trues, label_preds, n_class=val_n_class)
     metrics = np.array(metrics)
     metrics *= 100
     print('''\
