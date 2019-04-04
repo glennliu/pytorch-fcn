@@ -53,7 +53,7 @@ def main():
     n_class = len(my_testLoader.dataset.class_names)
     print(my_testLoader.dataset.class_names)
 
-    if osp.basename(model_file).startswith('fcn32s'):
+    if osp.basename(model_file).startswith('model_best'):
         model = torchfcn.models.FCN32s(n_class=21)
     elif osp.basename(model_file).startswith('fcn16s'):
         model = torchfcn.models.FCN16s(n_class=21)
@@ -78,7 +78,6 @@ def main():
     print('==> Evaluating with VOC2011ClassSeg seg11valid')
     visualizations = []
     label_trues, label_preds = [], []
-    cnt = 0
     for batch_idx, (data, target) in tqdm.tqdm(enumerate(my_testLoader),
                                                total=len(my_testLoader),
                                                ncols=80, leave=False):
@@ -96,16 +95,16 @@ def main():
             img, lt = my_testLoader.dataset.untransform(img, lt)
             label_trues.append(lt)
             label_preds.append(lp)
+            img_name = my_testLoader.dataset.getImageName(batch_idx)
             # if len(visualizations) < 4:
             viz = fcn.utils.visualize_segmentation(
                 lbl_pred=lp, img=img, n_class=n_class,
                 label_names=my_testLoader.dataset.class_names)
             visualizations.append(viz)
             viz = fcn.utils.get_tile_image(visualizations)
-            skimage.io.imsave('./demo_result/viz_evaluate'+str(cnt)+'.png', viz)
+            skimage.io.imsave('./val_result/'+img_name+'.png', viz)
             print(viz.shape)
             visualizations = []
-            cnt = cnt+1
 
     metrics = torchfcn.utils.label_accuracy_score(
         label_trues, label_preds, n_class=n_class)

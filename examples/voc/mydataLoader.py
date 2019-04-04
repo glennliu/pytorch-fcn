@@ -30,10 +30,13 @@ class VOCClassSegBase_revised(data.Dataset):
         # VOC2011 and others are subset of VOC2012
         dataset_dir = osp.join(self.root, '')
         self.files = collections.defaultdict(list)
+        self.img_name = collections.defaultdict(list)
+
         for split in ['train', 'val']:
             imgsets_file = osp.join(dataset_dir, '%s/' % split, '%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
+                self.img_name[split].append(did)
                 img_file = osp.join(dataset_dir, '%s/images' % split, '%s.png' % did)
                 lbl_file = osp.join(
                     dataset_dir, '%s/labels' % split, '%s.png' % did)
@@ -51,6 +54,7 @@ class VOCClassSegBase_revised(data.Dataset):
         img_file = data_file['img']
         img = PIL.Image.open(img_file)
         img = np.array(img, dtype=np.uint8)
+        # print(self.img_name[self.split][0])
         # load label
         lbl_file = data_file['lbl']
         lbl = PIL.Image.open(lbl_file)
@@ -60,6 +64,9 @@ class VOCClassSegBase_revised(data.Dataset):
             return self.transform(img, lbl)
         else:
             return img, lbl
+
+    def getImageName(self,i):
+        return self.img_name[self.split][i]
 
     def transform(self, img, lbl):
         img = img[:, :, ::-1]  # RGB -> BGR
