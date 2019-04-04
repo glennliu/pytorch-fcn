@@ -32,7 +32,7 @@ class VOCClassSegBase_revised(data.Dataset):
         self.files = collections.defaultdict(list)
         self.img_name = collections.defaultdict(list)
 
-        for split in ['train', 'val']:
+        for split in ['train', 'val', 'test']:
             imgsets_file = osp.join(dataset_dir, '%s/' % split, '%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
