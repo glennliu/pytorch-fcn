@@ -13,26 +13,12 @@ class VOCClassSegBase_revised(data.Dataset):
 
     class_names = np.array([
         'background',
-        'aeroplane',
-        'bicycle',
-        'bird',
-        'boat',
-        'bottle',
-        'bus',
-        'car',
-        'cat',
-        'chair',
-        'cow',
-        'diningtable',
-        'dog',
-        'horse',
-        'motorbike',
-        'person',
-        'potted plant',
-        'sheep',
-        'sofa',
-        'train',
-        'tv/monitor',
+        'water',
+        'sky',
+        'road',
+        'building',
+        'vegetation',
+        'ground',
     ])
     mean_bgr = np.array([104.00698793, 116.66876762, 122.67891434])
 
@@ -48,19 +34,13 @@ class VOCClassSegBase_revised(data.Dataset):
             imgsets_file = osp.join(dataset_dir, '%s/' % split, '%s.txt' % split)
             for did in open(imgsets_file):
                 did = did.strip()
-                img_file = osp.join(dataset_dir, '%s/images' % split, '/%s.png' % did)
-                print(dataset_dir)
-                print(did)
-                print(img_file)
+                img_file = osp.join(dataset_dir, '%s/images' % split, '%s.png' % did)
                 lbl_file = osp.join(
-                    dataset_dir, '%s/labels' % split, '/%s.png' % did)
+                    dataset_dir, '%s/labels' % split, '%s.png' % did)
                 self.files[split].append({
                     'img': img_file,
                     'lbl': lbl_file,
                 })
-            # print(imgsets_file)
-            # print(img_file)
-            # print(lbl_file)
 
     def __len__(self):
         return len(self.files[self.split])

@@ -43,7 +43,7 @@ def main():
         batch_size=1, shuffle=False,
         num_workers=4, pin_memory=True)
 
-    png_root = osp.expanduser('~/Documents/5421_P1/my_images')
+    png_root = osp.expanduser('~/Documents/5421_P1/comp5421_TASK2')
     transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
                                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     my_testset = VOC2011ClassSeg_revised(png_root,split='val', transform=True)
