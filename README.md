@@ -30,15 +30,16 @@ pip install torchfcn
 ```
 
 ## Download Trained Model or Training a Model
-A model is trained based on test dataset from HKUST COMP5421. And the model can be downloaded here.
-
+A model is trained based on test dataset from HKUST COMP5421. And the model can be downloaded [here](https://hkustconnect-my.sharepoint.com/:u:/g/personal/cliuci_connect_ust_hk/EYcmHYk52fRJmd01G_6UKmABLeSeVfgbYIt_0VMsOfFUDw?e=s72NPd).
 For Training a model by yourself
 ```bash
 cd examples/voc
 python train_fcn32s_demo.py
 ```
 
-## Run demo on test and validation dataset
+## Run demo on validation and test dataset
+Download the project1 folder "comp5421_TASK2", which contains folder `train`, `validation` and `test`. And open `examples/voc/demo.py`, change its `pkg_root` to the downloaded `comp5421_TASK2` directory.
+Then, 
 ```bash
 cd examples/voc
 python demo.py $PYTORCH_MODEL_PATH
@@ -61,9 +62,8 @@ FWAV Accuracy: 66.66971237667332
 ```
 
 
-## Training
-
-See [VOC example](examples/voc).
+## Other Training
+For other training models, see [VOC example](examples/voc).
 
 
 ## Accuracy

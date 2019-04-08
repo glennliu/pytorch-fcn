@@ -26,7 +26,6 @@ def imshow(img):
     plt.show()
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('model_file', help='Model path')
@@ -36,16 +35,16 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
     model_file = args.model_file
 
-    root = osp.expanduser('~/data/datasets')
-    val_loader = torch.utils.data.DataLoader(
-        torchfcn.datasets.VOC2011ClassSeg(
-            root, split='seg11valid', transform=True),
-        batch_size=1, shuffle=False,
-        num_workers=4, pin_memory=True)
+    # root = osp.expanduser('~/data/datasets')
+    # val_loader = torch.utils.data.DataLoader(
+    #     torchfcn.datasets.VOC2011ClassSeg(
+    #         root, split='seg11valid', transform=True),
+    #     batch_size=1, shuffle=False,
+    #     num_workers=4, pin_memory=True)
+    # transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
+    #                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
     png_root = osp.expanduser('~/Documents/5421_P1/comp5421_TASK2')
-    transform = transforms.Compose([transforms.ToTensor(),transforms.Resize(360,500),
-                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     valSet = VOC2011ClassSeg_revised(png_root,split='val', transform=True)
     valLoader = torch.utils.data.DataLoader(valSet, batch_size=1, shuffle=False, num_workers=4, pin_memory=True)
     testSet = VOC2011ClassSeg_revised(png_root,split='test',transform=True)
