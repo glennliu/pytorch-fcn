@@ -4,8 +4,8 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/torchfcn.svg)](https://pypi.org/project/torchfcn)
 [![Build Status](https://travis-ci.org/wkentaro/pytorch-fcn.svg?branch=master)](https://travis-ci.org/wkentaro/pytorch-fcn)
 
-PyTorch implementation of [Fully Convolutional Networks](https://github.com/shelhamer/fcn.berkeleyvision.org).
-Based on previous model, a demo program is developed for HKUST COMP5421 Project 1 (Semantic Segmentation)
+This is a project forked from [Fully Convolutional Networks](https://github.com/shelhamer/fcn.berkeleyvision.org).
+Based on previous model, a demo program is developed for HKUST COMP5421 Project 1 TASK2(Semantic Segmentation)
 
 ## Requirements
 
@@ -29,7 +29,7 @@ pip install .
 pip install torchfcn
 ```
 
-## Download Trained Model or Training a Model
+## Download COMP5421 Trained Model or Training a Model
 A model is trained based on test dataset from HKUST COMP5421. And the model can be downloaded [here](https://hkustconnect-my.sharepoint.com/:u:/g/personal/cliuci_connect_ust_hk/EYcmHYk52fRJmd01G_6UKmABLeSeVfgbYIt_0VMsOfFUDw?e=s72NPd).
 For Training a model by yourself
 ```bash
