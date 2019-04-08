@@ -8,10 +8,11 @@ import json
 from tqdm import tqdm
 import os
 from PIL import Image as PILImage
+import torchvision.transforms as transforms
 
-PRED_DIR='/home/lch/code_ws/comp5421/pytorch-fcn/examples/voc/val_result'
+PRED_DIR='/home/lch/Documents/5421_P1/comp5421_TASK2/val_result'
 GT_DIR='/home/lch/Documents/5421_P1/comp5421_TASK2/val/labels'
-DATA_LIST_PATH='/home/lch/Documents/5421_P1/comp5421_TASK2/val/val.txt'
+DATA_LIST_PATH='/home/lch/Documents/5421_P1/comp5421_TASK2/val/eval.txt'
 
 NUM_CLASSES=7
 
@@ -31,17 +32,28 @@ def main():
     confusion_matrix = np.zeros((NUM_CLASSES, NUM_CLASSES))
     image_list = [i_id.strip() for i_id in open(args.data_list)]
     tbar = tqdm(image_list)
+    transform = transforms.Compose([transforms.ToTensor(),
+                                    transforms.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+
     for index, img_name in enumerate(tbar):
         # print('%d/%d processd'%(index)%(len(testloader)))
         pred_file = os.path.join(args.pred_dir, "%s.png" % img_name)
         gt_file = os.path.join(args.gt_dir, "%s.png" % img_name)
         seg_pred = PILImage.open(pred_file)
         seg_gt   = PILImage.open(gt_file)
+
         seg_pred = np.array(seg_pred)
         seg_gt   = np.array(seg_gt)
+        seg_pred = transform(seg_pred)
+
+        print('groundtruth imgs:',seg_gt)
+        print('predict imgs:',seg_pred)
+
         ignore_index = seg_gt != 255
         seg_gt = seg_gt[ignore_index]
         seg_pred = seg_pred[ignore_index]
+
         confusion_matrix += get_confusion_matrix(seg_gt, seg_pred, NUM_CLASSES)
 
         pos = confusion_matrix.sum(1)
