@@ -104,6 +104,7 @@ def main():
                 lbl_pred=lp, img=img, n_class=val_n_class,
                 label_names=testLoader.dataset.class_names)
             visualizations.append(viz)
+            # print(viz)
             viz = fcn.utils.get_tile_image(visualizations)
             skimage.io.imsave('./test_result/'+img_name+'.png', viz)
             # print(viz.shape)
